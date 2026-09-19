@@ -3,12 +3,12 @@ import joblib
 import nltk
 from nltk import RegexpTokenizer
 from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
+from nltk.stem import SnowballStemmer
 
 # Configuración de página
 st.set_page_config(
-    page_title="Clasificador ODS - Microproyecto 2",
-    page_icon="🌍",
+    page_title="Microproyecto 2",
+    page_icon="ODS",
     layout="centered"
 )
 
@@ -18,14 +18,14 @@ def download_nltk_resources():
     nltk.download('stopwords')
 
 download_nltk_resources()
+stop_words_es = set(stopwords.words('spanish'))
 
 # Función de preprocesamiento
 def prepare_text(text):
     tokenizer = RegexpTokenizer(r'\w+')
-    stemmer = PorterStemmer()
-    tokens = tokenizer.tokenize(text)
-    stop_words = set(stopwords.words('spanish'))
-    tokens = [word for word in tokens if word not in stop_words]
+    stemmer = SnowballStemmer(language='spanish')
+    tokens = tokenizer.tokenize(text.lower())
+    tokens = [word for word in tokens if word not in stop_words_es]
     tokens = [stemmer.stem(word) for word in tokens]
     return ' '.join(tokens)
 
@@ -58,7 +58,7 @@ def load_model():
 pipeline = load_model()
 
 # Interfaz de usuario
-st.title("🌍 Identificador de Relaciones Semánticas con ODS")
+st.title("Identificador de Relaciones Semánticas con ODS")
 st.markdown(
     """
     Esta herramienta utiliza técnicas de **Procesamiento de Lenguaje Natural (PLN)** 
@@ -73,7 +73,7 @@ texto_usuario = st.text_area(
     placeholder="Ej: Implementación de energías renovables como solar y eólica para reducir las emisiones de carbono..."
 )
 
-if st.button("🔍 Clasificar ODS", type="primary"):
+if st.button("Clasificar ODS", type="primary"):
     if not texto_usuario.strip():
         st.warning("Por favor, ingresa algún texto antes de clasificar.")
     else:
